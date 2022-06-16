@@ -13,22 +13,12 @@ terraform {
 provider "azurerm" {
   features {}
 }
-
-data "azurerm_shared_image_version" "VMimage" {
-  name                = var.image_version_name
-  image_name          = var.image_name
-  gallery_name        = var.image_gallery_name
-  resource_group_name = var.image_resource_group_name
-}
-
-
 #------------------------------------------------>
 # Create Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = var.azurerm_resource_group_name
   location = var.location
 }
-
 # Create a virtual network
 resource "azurerm_virtual_network" "vnet" {
   name                = "Vnet"
@@ -82,6 +72,28 @@ resource "azurerm_private_dns_zone_virtual_network_link" "default" {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------image version for scale set----->
+data "azurerm_shared_image_version" "VMimage" {
+  name                = var.image_version_name
+  image_name          = var.image_name
+  gallery_name        = var.image_gallery_name
+  resource_group_name = var.image_resource_group_name
+}
+
 resource "azurerm_linux_virtual_machine_scale_set" "Vm_ScaleSet" {
   name                = "ScaleSet"
   resource_group_name = azurerm_resource_group.rg.name
@@ -94,14 +106,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "Vm_ScaleSet" {
 
   source_image_id = data.azurerm_shared_image_version.VMimage.id
 
-
-  /*source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts-gen2"
-    version   = "latest"
-  }
-  */
 
   os_disk {
 
@@ -220,16 +224,7 @@ resource "azurerm_lb_backend_address_pool" "backend_address_pool_public" {
   name            = "BackEndAddressPool"
 }
 
-resource "azurerm_lb_nat_pool" "lbnatpool" {
-  resource_group_name            = azurerm_resource_group.rg.name
-  name                           = "ssh"
-  loadbalancer_id                = azurerm_lb.publicLB.id
-  protocol                       = "Tcp"
-  frontend_port_start            = 50000
-  frontend_port_end              = 50119
-  backend_port                   = 22
-  frontend_ip_configuration_name = azurerm_lb.publicLB.frontend_ip_configuration[0].name
-}
+
 #Create lb probe for port 8080
 resource "azurerm_lb_probe" "lb_probe" {
   name = "tcpProbe"
@@ -325,66 +320,5 @@ resource "azurerm_subnet_network_security_group_association" "private" {
 }
 
 
-resource "random_string" "fqdn" {
- length  = 6
- special = false
- upper   = false
- number  = false
-}
-
-resource "azurerm_public_ip" "jumpbox" {
- name                         = "jumpbox-public-ip"
- location                     = var.location
- resource_group_name          = azurerm_resource_group.rg.name
- allocation_method            = "Static"
- domain_name_label            = "${random_string.fqdn.result}-ssh"
-}
-
-resource "azurerm_network_interface" "jumpbox" {
- name                = "jumpbox-nic"
- location            = var.location
- resource_group_name = azurerm_resource_group.rg.name
-
- ip_configuration {
-   name                          = "IPConfiguration"
-   subnet_id                     = azurerm_subnet.Public_Subnet.id
-   private_ip_address_allocation = "dynamic"
-   public_ip_address_id          = azurerm_public_ip.jumpbox.id
- }
-
-}
-
-resource "azurerm_virtual_machine" "jumpbox" {
- name                  = "jumpbox"
- location              = var.location
- resource_group_name   = azurerm_resource_group.rg.name
- network_interface_ids = [azurerm_network_interface.jumpbox.id]
- vm_size               = "Standard_B1s"
-
-    storage_image_reference {
-   publisher = "Canonical"
-   offer     = "0001-com-ubuntu-server-foca"
-   sku       = "20_04-lts-gen2"
-   version   = "latest"
- }
-
- storage_os_disk {
-   name              = "jumpbox-osdisk"
-   caching           = "ReadWrite"
-   create_option     = "FromImage"
-   managed_disk_type = "Standard_LRS"
- }
-
- os_profile {
-   computer_name  = "jumpbox"
-   admin_username = var.admin_username
-   admin_password = var.admin_password
- }
-
- os_profile_linux_config {
-   disable_password_authentication = false
- }
-
-}
 
 

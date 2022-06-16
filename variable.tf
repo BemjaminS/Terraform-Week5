@@ -14,20 +14,20 @@ variable "public_vm_size" {
 }
 
 variable "image_version_name" {
-  default = "1.0.0"
+  default = "2.0.0"
   type    = string
 }
 variable "image_name" {
-  default = "Web_app_image"
+  default = "Image_Defintion"
   type    = string
 }
 
 variable "image_gallery_name" {
-  default = "App_Gallery"
+  default = "New_Image"
   type    = string
 }
 variable "image_resource_group_name" {
-  default = "Web-Image"
+  default = "App_Image"
   type    = string
 }
 
@@ -54,15 +54,18 @@ variable "name_prefix" {
 
 
 variable "admin_username" {
+  default     = "ubuntu"
   type        = string
   description = "Administrator user name for virtual machine"
 }
 variable "postgres_Username" {
+  default     = "weightTracker"
   type        = string
   description = "Username For Data-base"
 }
 
 variable "admin_password" {
+  default     = "Ben11223344!"
   type        = string
   description = "Password For virtual machine"
 }
