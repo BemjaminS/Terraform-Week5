@@ -179,17 +179,6 @@ resource "azurerm_lb" "publicLB" {
     public_ip_address_id = azurerm_public_ip.publicip.id
   }
 }
-#Create rule For load balancer
-resource "azurerm_lb_nat_rule" "n_rule" {
-  count                          = 3
-  resource_group_name            = azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.publicLB.id
-  name                           = "SSHconnect${count.index}"
-  protocol                       = "Tcp"
-  frontend_port                  = "5000${count.index}"
-  backend_port                   = 22
-  frontend_ip_configuration_name = azurerm_lb.publicLB.frontend_ip_configuration[0].name
-}
 
 
 #Create backend address pool for the lb
@@ -254,7 +243,7 @@ resource "azurerm_network_security_group" "nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8080"
-    source_address_prefix      = azurerm_public_ip.publicip.ip_address
+    source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 
@@ -278,6 +267,19 @@ resource "azurerm_network_security_group" "Dbnsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  security_rule {
+    name                       = "any"
+    priority                   = 300
+    direction                  = "Inbound"
+    access                     = "Deny"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+
 
 }
 #---------------------------------------------------------subnet association ------->

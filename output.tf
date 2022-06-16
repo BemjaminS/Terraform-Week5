@@ -1,13 +1,12 @@
-output "vmss_public_ip_fqdn" {
-  value = azurerm_public_ip.publicip.fqdn
-}
-/*
-output "jumpbox_public_ip_fqdn" {
-  value = azurerm_public_ip.jumpbox-Ip.fqdn
+
+output "Virtual_machine_userName" {
+  value = var.admin_username
 }
 
-output "jumpbox_public_ip" {
-  value = azurerm_public_ip.jumpbox-Ip.ip_address
+output "Virtual_machine_password" {
+  value = var.admin_password
 }
-*/
+
+
+
 
