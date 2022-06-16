@@ -1,18 +1,5 @@
 # Configure the Azure provider
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.0.2"
-    }
-  }
 
-  required_version = ">= 1.1.0"
-}
-
-provider "azurerm" {
-  features {}
-}
 #------------------------------------------------>
 # Create Resource Group
 resource "azurerm_resource_group" "rg" {
@@ -73,19 +60,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "default" {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #------image version for scale set----->
 data "azurerm_shared_image_version" "VMimage" {
   name                = var.image_version_name
@@ -95,11 +69,11 @@ data "azurerm_shared_image_version" "VMimage" {
 }
 
 resource "azurerm_linux_virtual_machine_scale_set" "Vm_ScaleSet" {
-  name                = "ScaleSet"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "Standard_B1s"
-  instances           = 3
+  name                            = "ScaleSet"
+  resource_group_name             = azurerm_resource_group.rg.name
+  location                        = azurerm_resource_group.rg.location
+  sku                             = "Standard_B1s"
+  instances                       = 3
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = false
@@ -184,7 +158,7 @@ resource "azurerm_monitor_autoscale_setting" "scaling" {
       }
     }
   }
-}#----------------------------------------------------Public-Ip------->
+} #----------------------------------------------------Public-Ip------->
 # Create public IP
 resource "azurerm_public_ip" "publicip" {
   name                = "PubIp"
@@ -207,7 +181,7 @@ resource "azurerm_lb" "publicLB" {
 }
 #Create rule For load balancer
 resource "azurerm_lb_nat_rule" "n_rule" {
-  count = 3
+  count                          = 3
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.publicLB.id
   name                           = "SSHconnect${count.index}"
@@ -253,6 +227,7 @@ resource "azurerm_lb_rule" "LB_rule" {
   #backend_address_pool_ids       = azurerm_lb_backend_address_pool.backend_address_pool_public.id
 }
 #--------------------------------------------------------Security group------------------->
+
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nsg" {
   name                = "PUBLIC_NSG"

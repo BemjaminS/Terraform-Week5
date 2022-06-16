@@ -1,6 +1,6 @@
 variable "azurerm_resource_group_name" {
   description = "this is the name of resource group"
-  default     = "BootCamp-Week-5"
+  default     = "Terraform-Week-5"
 }
 
 variable "location" {
@@ -54,7 +54,6 @@ variable "name_prefix" {
 
 
 variable "admin_username" {
-  default     = "ubuntu"
   type        = string
   description = "Administrator user name for virtual machine"
 }
@@ -65,7 +64,6 @@ variable "postgres_Username" {
 }
 
 variable "admin_password" {
-  default     = "Ben11223344!"
   type        = string
   description = "Password For virtual machine"
 }
