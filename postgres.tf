@@ -15,3 +15,19 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   depends_on = [azurerm_private_dns_zone_virtual_network_link.default]
 }
 
+resource "azurerm_postgresql_flexible_server_firewall_rule" "fwconfig" {
+  name      = "example-fw"
+  server_id = azurerm_postgresql_flexible_server.postgres.id
+
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "255.255.255.255"
+}
+
+
+resource "azurerm_postgresql_flexible_server_configuration" "flexible_server_configuration" {
+  name      = "require_secure_transport"
+  server_id = azurerm_postgresql_flexible_server.postgres.id
+  value     = "off"
+
+
+}

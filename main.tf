@@ -72,7 +72,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "Vm_ScaleSet" {
   name                            = "ScaleSet"
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
-  sku                             = "Standard_B1s"
+  sku                             = "Standard_B2s"
   instances                       = 3
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
@@ -114,8 +114,8 @@ resource "azurerm_monitor_autoscale_setting" "scaling" {
 
     capacity {
       default = 3
-      minimum = 2
-      maximum = 5
+      minimum = 1
+      maximum = 3
     }
 
     rule {
@@ -267,17 +267,7 @@ resource "azurerm_network_security_group" "Dbnsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-  security_rule {
-    name                       = "any"
-    priority                   = 300
-    direction                  = "Inbound"
-    access                     = "Deny"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+
 
 
 
